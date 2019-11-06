@@ -21,12 +21,13 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 
 # If modifying these scopes, delete the file token.pickle.
-SCOPES = ['https://www.googleapis.com/auth/documents.readonly']
+# SCOPES = ['https://www.googleapis.com/auth/documents.readonly']
+SCOPES = ['https://www.googleapis.com/auth/documents']
 
 # The ID of a sample document.
 DOCUMENT_ID = '1VQ4lUr1hrrKQwOAYa2z0h-0xltBm1PEuQLY8VksWk7c'
 
-def main():
+def auth():
     """Shows basic usage of the Docs API.
     Prints the title of a sample document.
     """
@@ -55,8 +56,25 @@ def main():
     document = service.documents().get(documentId=DOCUMENT_ID).execute()
 
     print('The title of the document is: {}'.format(document.get('title')))
+    return service
+
+
+def insert(service):
+    requests = [
+         {
+            'insertText': {
+                'location': {
+                    'index': 1,
+                },
+                'text': "Added from API"
+            }
+        },
+    ]
+
+    result = service.documents().batchUpdate(
+        documentId=DOCUMENT_ID, body={'requests': requests}).execute()
 
 
 if __name__ == '__main__':
-    main()
+   insert(auth())
 # [END docs_quickstart]
